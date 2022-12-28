@@ -1,10 +1,19 @@
 type reg =
   | V0
+  | FP
+  | SP
 
 type label = string
 
+type loc = 
+| Mem of reg * int
+
 type instr =
-  | Li    of reg * int
+  | Li of reg * int
+  | Sw of reg * loc
+  | Lw of reg * loc 
+  | Move of reg * reg 
+  | Addi of reg * reg * int
 
 type directive =
   | Asciiz of string
@@ -17,9 +26,18 @@ let ps = Printf.sprintf (* alias raccourci *)
 
 let fmt_reg = function
   | V0   -> "$v0"
+  | FP  -> "$fp"
+  | SP -> "$sp"
+
+  let fmt_loc = function
+  | Mem ( r,o ) -> ps "%d(%s)" o (fmt_reg r)
 
 let fmt_instr = function
   | Li (r, i) -> ps "  li %s, %d" (fmt_reg r) i
+  | Sw (r, l) -> ps "  sw %s, %s" (fmt_reg r) (fmt_loc l)
+  | Lw (r, l) -> ps "  lw %s, %s" (fmt_reg r) (fmt_loc l)
+  | Move (d,s) -> ps " move %s, %s" (fmt_reg d) (fmt_reg s)
+  | Addi (d, r, i) -> ps " addi %s, %s, %d" (fmt_reg d) (fmt_reg r) i
 
 let fmt_dir = function
   | Asciiz (s) -> ps ".asciiz \"%s\"" s

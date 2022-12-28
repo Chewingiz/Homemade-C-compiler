@@ -1,4 +1,4 @@
-(* ocamlbuild -use-menhir main.byte *)
+(* ocamlbuild -use-menhir test.byte *)
 
 open Lexing
 open Ast
