@@ -4,6 +4,7 @@
 %}
 
 %token <int> Lint
+%token <bool> Lbool
 %token Lend
 
 %start prog
@@ -20,4 +21,5 @@ expr:
 | n = Lint {
   Int { value = n ; pos = $startpos(n) }
 }
+| b = Lbool { Bool	 { value = b ; pos = $startpos(b)}	}
 ;
