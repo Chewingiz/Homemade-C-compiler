@@ -37,7 +37,7 @@ let rec analyze_block block env =
   match block with
   | i :: b -> 
     let ai, new_env = analyze_instr i env in 
-    ai :: (analyze_block b new_env)
+    ai :: (analyze_block b new_env) 
   | [] -> []
 
 let analyse_program program env = 

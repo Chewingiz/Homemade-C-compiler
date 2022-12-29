@@ -18,7 +18,7 @@
 %%
 
 prog:
-	| i = block ; b = prog { i @ b }
+	| i = block ; b = prog { i :: b }
 	| i = block ; Lend { [i] }
 	(*| Lend { [] }*)
 ;
@@ -26,7 +26,7 @@ prog:
 block:
   | Lopeningbrace ; i = instr ; Lsc ; b = block { i @ b }
 	| i = instr ; Lsc ; b = block { i @ b }
-	| i = instr ; Lsc ; Lclosingbrace { [i] }
+	| i = instr ; Lsc ; Lclosingbrace { i }
 ;
 
 instr:
