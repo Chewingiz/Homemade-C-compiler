@@ -34,6 +34,7 @@ let compile_instr instr info =
     info with
     asm = info.asm 
     @ compile_expr expr info.env (*put the value in vo*) 
+    @ [Jr RA]
     }
 
 let rec compile_block block info = 
@@ -43,9 +44,17 @@ let rec compile_block block info =
     let new_info = compile_instr i info in compile_block b new_info
   | [] -> info
 
+  let rec compile_program program info = 
+    match program with
+    | i :: b -> 
+   (* let new_info = compile_instr i info in new_info :: (compile_block b new_info)*)
+      let new_info = compile_block i info in compile_program b new_info
+    | [] -> info
+  
+  
 
 let compile ir =
-  let info = compile_block ir 
+  let info = compile_program ir 
       {
         asm = Baselib.builtins
       ; env = Env.empty

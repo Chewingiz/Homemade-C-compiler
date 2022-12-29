@@ -7,18 +7,26 @@
 %token <bool> Lbool
 %token <string> Lident
 %token <string> Ltype
-%token Lend Lsc Leq Lreturn Lvoid
+%token Lend Lsc Leq Lreturn Lopeningbrace Lclosingbrace Lopeningparenthesis Lclosingparenthesis 
+%token Lif Lelse
+%token Lvoid
 
 %start prog
 
-%type <Ast.Syntax.block> prog
+%type <Ast.Syntax.program> prog
 
 %%
 
 prog:
-	| i = instr ; Lsc ; b = prog { i @ b }
-	| i = instr ; Lsc ; Lend { i }
+	| i = block ; b = prog { i @ b }
+	| i = block ; Lend { [i] }
 	(*| Lend { [] }*)
+;
+
+block:
+  | Lopeningbrace ; i = instr ; Lsc ; b = block { i @ b }
+	| i = instr ; Lsc ; b = block { i @ b }
+	| i = instr ; Lsc ; Lclosingbrace { [i] }
 ;
 
 instr:

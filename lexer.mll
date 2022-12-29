@@ -19,12 +19,20 @@ rule token = parse
 | ';'             { Lsc }
 | '='             { Leq }
 | "return"        { Lreturn }
+| '{'             { Lopeningbrace }
+| '}'             { Lclosingbrace }
+| '('             { Lopeningparenthesis }
+| ')'             { Lclosingparenthesis }
 
 (*Void*)
 | "void"          { Lvoid }
 
 (*Numbers*)
 | num+ as n       { Lint (int_of_string n) }
+
+(*Condition*) 
+| "if"            {Lif}
+| "else"          {Lelse}
 
 (*Bools*)
 | "true"          { Lbool true }

@@ -8,6 +8,7 @@ main:
   li $v0, 1
   sw $v0, -4($fp)
   lw $v0, 0($fp)
+  jr $ra
   move $a0, $v0
   li $v0, 1
   syscall

@@ -17,8 +17,10 @@ module Syntax = struct
       ; pos: Lexing.position
       }
     | Return of { expr : expr ; pos: Lexing.position}
-  type block = instr list
+    (*| Cond of { expr : expr ; block1: block ; block2 : block}*)
+  and block = instr list
 
+  type program = block list
 end
 
 module IR = struct
@@ -32,6 +34,8 @@ module IR = struct
     | DeclVar of string
     | Assign of string * expr
     | Return of expr
-
-  type block = instr list
+    (*| Cond of expr * block * block*)
+  and block = instr list
+  
+ type program = block list
 end

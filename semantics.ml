@@ -40,6 +40,13 @@ let rec analyze_block block env =
     ai :: (analyze_block b new_env)
   | [] -> []
 
+let analyse_program program env = 
+  match program with
+  | i :: b -> 
+    let ai, new_env = analyze_block i env in 
+    ai :: (analyze_program b new_env)
+  | [] -> []
+  
 let analyze parsed =
-  analyze_block parsed Baselib._types_
+  analyse_program parsed Baselib._types_
 
