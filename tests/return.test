@@ -1,0 +1,4 @@
+int v = 10;
+bool zed = true;
+return v;
+

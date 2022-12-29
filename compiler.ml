@@ -11,9 +11,10 @@ type cinfo = {
 
 let rec compile_expr e env =
   match e with
-  | Int n  -> [ Li (V0, n) ]
-  | Bool b -> [Li (V0, if b then 1 else 0)] 
-  | Var v -> [Lw (V0,Env.find v env)] 
+  | Int n   -> [ Li (V0, n) ]
+  | Bool b  -> [ Li (V0, if b then 1 else 0) ] 
+  | Var v   -> [ Lw (V0, Env.find v env) ] 
+  | Void    -> [] 
 
 let compile_instr instr info = 
   match instr with 
@@ -27,9 +28,13 @@ let compile_instr instr info =
     { info with 
     asm = info.asm 
      @ compile_expr e info.env
-     @ [ Sw (V0, Env.find v info.env)]
+     @ [ Sw (V0, Env.find v info.env) ]
     }
-
+  | Return expr ->  { 
+    info with
+    asm = info.asm 
+    @ compile_expr expr info.env (*put the value in vo*) 
+    }
 
 let rec compile_block block info = 
   match block with

@@ -7,7 +7,7 @@
 %token <bool> Lbool
 %token <string> Lident
 %token <string> Ltype
-%token Lend Lsc Leq
+%token Lend Lsc Leq Lreturn Lvoid
 
 %start prog
 
@@ -42,6 +42,7 @@ instr:
     		 }
     ]
   }
+  | Lreturn ; e = expr { [ Return {expr = e; pos =$startpos} ] }
 ;
 
 expr:

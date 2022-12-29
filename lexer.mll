@@ -8,15 +8,20 @@
 let num = ['0'-'9']
 let alpha = ['a' - 'z' 'A' - 'Z']
 let ident = alpha ( alpha | num | '_')*
-let type =  ("int" | "bool")  
+let type =  ("int" | "bool" | "void")  
 
 rule token = parse
 | eof             { Lend }
 | [ ' ' '\t' ]    { token lexbuf }
 | '\n'            { Lexing.new_line lexbuf; token lexbuf }
 
-| ';'             {Lsc}
-| '='             {Leq}
+(*General*)
+| ';'             { Lsc }
+| '='             { Leq }
+| "return"        { Lreturn }
+
+(*Void*)
+| "void"          { Lvoid }
 
 (*Numbers*)
 | num+ as n       { Lint (int_of_string n) }
@@ -24,6 +29,7 @@ rule token = parse
 (*Bools*)
 | "true"          { Lbool true }
 | "false"         { Lbool false }
+
 
 (*Variables*)
 | type as t       { Ltype (t)}
