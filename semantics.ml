@@ -57,7 +57,9 @@ let rec analyze_list_type_func list_type_func env =
 let analyze_def def env = 
   match def with
     | Syntax.Func f -> let new_b, new_env = (analyze_block f.block env) in 
-      let list_arg, newer_env = analyze_list_type_func f.arguments new_env in Func (f.type_t , f.name , list_arg , new_b) , newer_env   
+      let list_arg, newer_env = analyze_list_type_func f.arguments new_env in 
+        let f_env = Env.add f.name f.type_t new_env in
+       Func (f.type_t , f.name , list_arg , new_b) , f_env   
 
 let rec analyze_prog prog env = 
   match prog with
