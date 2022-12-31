@@ -49,7 +49,7 @@ let rec analyze_instr instr env =
       | Var v  -> if not(Env.find v env = Env.find v env) then type_error "variable type" a.pos ;  Assign ((IR1.LVar(lv)), ae) , env
       )
     
-    (*| LAddr  v -> let z = IR1.LAddr(v) in Assign (z, Value(ae)) , env (* No tests for now *)  *) 
+    (*| LAddr  v -> let z = (V1(v)) in Assign (z, Value(ae)) , env (* No tests for now *)  *)
     )
 
   | Return r -> let ae = analyze_expr r.expr env in Return ae, env

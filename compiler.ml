@@ -23,6 +23,7 @@ let rec compile_expr e env =
   match e with
   | IR2.Value v -> compile_value v env
   | Var v   -> [ Lw (V0, Env.find v env) ] 
+  
 
 
 let rec compile_instr instr info = 
@@ -30,7 +31,7 @@ let rec compile_instr instr info =
   | IR2.DeclVar v -> 
     {
       info with 
-      fpo = info.fpo -4
+      fpo = info.fpo + 4
       ; env = Env.add v (Mem (FP, info.fpo)) info.env
     }
   | Assign (lv, e) ->
