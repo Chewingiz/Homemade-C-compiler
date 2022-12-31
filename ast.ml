@@ -1,3 +1,7 @@
+module type Parameters = sig
+  type value
+end
+
 module Syntax = struct
   type value =
   | Void 
@@ -5,16 +9,21 @@ module Syntax = struct
            ; pos: Lexing.position }
   | Bool of { value: bool
            ; pos: Lexing.position }
+  | Str of { value: string
+           ; pos: Lexing.position }
 
   type expr =
     | Value of value
     | Var of  { name: string
                  ; pos: Lexing.position }  
-
+  type lvalue =
+  | LVar  of string
+  | LAddr of expr
+             
   type instr = 
     | DeclVar of { name: string ; type_v: string ; pos: Lexing.position}
     | Assign of {
-        var: string
+        var: lvalue
       ; expr: expr
       ; pos: Lexing.position
       }
@@ -33,20 +42,36 @@ module Syntax = struct
 
 end
 
-module IR = struct
-  type value =
-  | Void 
-  | Bool of bool
-  | Int of int
-  (*|Str of string*)
 
-  type expr =
-    | Value of value
-    | Var of string
+module V1 = struct
+  type value =
+    | Void 
+    | Bool of bool
+    | Int  of int
+    | Str  of string
+end
+
+module V2 = struct
+  type value =
+    | Void 
+    | Bool of bool
+    | Int  of int
+    | Data of string
+end
+
+module IR (P : Parameters) = struct
  
+  type expr =
+    | Value of P.value
+    | Var of string
+
+  type lvalue =
+    | LVar  of string
+    | LAddr of expr
+
   type instr = 
     | DeclVar of string
-    | Assign of string * expr
+    | Assign of lvalue  * expr
     | Return of expr
   and block = instr list
 
@@ -61,3 +86,6 @@ module IR = struct
   type prog = def list
 
 end
+
+module IR1 = IR(V1)
+module IR2 = IR(V2)

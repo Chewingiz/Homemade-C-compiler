@@ -19,7 +19,8 @@ let () =
     let parsed = Parser.prog Lexer.token buf in
     close_in f ;
     let ast = Semantics.analyze parsed in
-    let asm = Compiler.compile ast in
+    let simplified = Simplifier.simplify ast in
+    let asm = Compiler.compile simplified in
     Mips.emit Stdlib.stdout asm
   with
   | Lexer.Error c ->

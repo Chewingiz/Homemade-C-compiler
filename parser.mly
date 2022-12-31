@@ -7,8 +7,9 @@
 %token <bool> Lbool
 %token <string> Lident
 %token <string> Ltype
+%token <string> Lstring
 %token Lend Lsc Leq Lreturn Lvoid Lcomma
-%token Lopeningbrace Lclosingbrace Lopeningparenthesis Lclosingparenthesis 
+%token Lopeningbrace Lclosingbrace Lopeningparenthesis Lclosingparenthesis Lquotationmark
 
 %start prog
 
@@ -59,13 +60,13 @@ instr:
   |  t = Ltype ; id = Lident; Leq; e = expr
   {
     [ DeclVar { name = id ; type_v = t ; pos = $startpos(id)}
-      ; Assign { var = id ; expr = e ; pos = $startpos($3) }
+      ; Assign { var = LVar(id) ; expr = e ; pos = $startpos($3) }
     ]
   }
   | id = Lident; Leq; e = expr
   {
 	[ Assign { 
-          var = id
+          var = LVar(id)
      		 ; expr = e 
     		 ; pos = $startpos($2) 
     		 }
@@ -79,5 +80,6 @@ expr:
   Value (Int { value = n ; pos = $startpos(n) })
 }
 | b = Lbool {Value ( Bool	 { value = b ; pos = $startpos(b)})	}
+| Lquotationmark ; s = Lident ; Lquotationmark{Value ( Str	 { value = s ; pos = $startpos(s)})	}
 | v = Lident { Var 	 { name = v ; pos = $startpos(v)}	}
 ;

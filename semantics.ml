@@ -1,5 +1,5 @@
 open Ast
-open Ast.IR
+open Ast.IR1
 open Baselib
 
 exception Error of string * Lexing.position
@@ -9,9 +9,10 @@ let type_error expected p= raise (Error ("Wrong type, expected " ^ expected , p 
 
 let rec analyze_value v env = 
   match v with
-  | Syntax.Void -> Void
+  | Syntax.Void -> V1.Void
   | Syntax.Int n  -> Int n.value
   | Syntax.Bool b -> Bool b.value
+  | Syntax.Str s -> Str s.value
 
 let rec analyze_expr expr env =
   match expr with
@@ -23,11 +24,14 @@ let rec analyze_expr expr env =
  
 
 let analyze_instr_values var pos ae env =
-     match ae with
-    | Int  _ -> if not(Env.find var env = "int") then type_error ((Env.find var env) ^ " got int") pos ;  Assign (var, Value(ae)) , env
-    | Bool _ -> if not(Env.find var env = "bool") then type_error ((Env.find var env)^ " got bool" )  pos ;  Assign (var, Value(ae)) , env
-    | Void   -> Assign (var, Value(Void)) , env
-    
+  match var with 
+  | LVar v -> 
+     (match ae with
+    | V1.Void   -> Assign (var, Value(Void)) , env
+    | Int  _ -> if not(Env.find v env = "int") then type_error ((Env.find v env) ^ " got int") pos ;  Assign (var, Value(ae)) , env
+    | Bool _ -> if not(Env.find v env = "bool") then type_error ((Env.find v env)^ " got bool" )  pos ;  Assign (var, Value(ae)) , env
+    | Str _  -> if not(Env.find v env = "str") then type_error ((Env.find v env) ^ " got str") pos ;  Assign (var, Value(ae)) , env)
+  | LAddr  v -> Assign (var, Value(ae)) , env (* No tests for now *)
   
 let rec analyze_instr instr env =
   match instr with
@@ -35,13 +39,19 @@ let rec analyze_instr instr env =
     DeclVar dv.name, Env.add dv.name (*true*) dv.type_v env
   
   | Syntax.Assign a -> 
-    if not (Env.mem a.var env ) then 
-      raise (Error ("variable does not exist: " ^a.var, a.pos));
-    let ae = analyze_expr a.expr env in
-    (match ae with 
-    | Value v -> analyze_instr_values a.var a.pos v env
-    | Var v  -> if not(Env.find a.var env = Env.find v env) then type_error "variable type" a.pos ;  Assign (a.var, ae) , env
+    (match a.var with 
+    | LVar lv -> 
+      if not (Env.mem lv env ) then 
+        raise (Error ("variable does not exist: " ^ lv, a.pos));
+      let ae = analyze_expr a.expr env in
+      (match ae with 
+      | Value v -> analyze_instr_values (IR1.LVar(lv)) a.pos v env
+      | Var v  -> if not(Env.find v env = Env.find v env) then type_error "variable type" a.pos ;  Assign ((IR1.LVar(lv)), ae) , env
+      )
+    
+    (*| LAddr  v -> let z = IR1.LAddr(v) in Assign (z, Value(ae)) , env (* No tests for now *)  *) 
     )
+
   | Return r -> let ae = analyze_expr r.expr env in Return ae, env
 
 let rec analyze_block block env =

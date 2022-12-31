@@ -8,7 +8,8 @@
 let num = ['0'-'9']
 let alpha = ['a' - 'z' 'A' - 'Z']
 let ident = alpha ( alpha | num | '_')*
-let type =  ("int" | "bool" )  
+let string = ( alpha | num | '_'| ' ')*
+let type =  ("int" | "bool"| "str" )  
 
 rule token = parse
 | eof             { Lend }
@@ -24,6 +25,7 @@ rule token = parse
 | '('             { Lopeningparenthesis }
 | ')'             { Lclosingparenthesis }
 | ','             { Lcomma }
+| '"'             { Lquotationmark}  
 
 (*Void*)
 | "void"          { Lvoid }
@@ -35,6 +37,8 @@ rule token = parse
 | "true"          { Lbool true }
 | "false"         { Lbool false }
 
+(*Strings*)
+(*| string+ as s    { Lstring(s) }*)
 
 (*Variables*)
 | type as t       { Ltype (t)}
