@@ -76,8 +76,8 @@ instr:
 
 expr:
 | n = Lint {
-  Int { value = n ; pos = $startpos(n) }
+  Value (Int { value = n ; pos = $startpos(n) })
 }
-| b = Lbool { Bool	 { value = b ; pos = $startpos(b)}	}
+| b = Lbool {Value ( Bool	 { value = b ; pos = $startpos(b)})	}
 | v = Lident { Var 	 { name = v ; pos = $startpos(v)}	}
 ;

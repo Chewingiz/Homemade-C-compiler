@@ -11,12 +11,18 @@ type cinfo = {
 ; return: string
 }
 
-let rec compile_expr e env =
-  match e with
+
+let compile_value v env = 
+  match v with 
+  | Void    -> [] 
   | Int n   -> [ Li (V0, n) ]
   | Bool b  -> [ Li (V0, if b then 1 else 0) ] 
+
+let rec compile_expr e env =
+  match e with
+  | Value v -> compile_value v env
   | Var v   -> [ Lw (V0, Env.find v env) ] 
-  | Void    -> [] 
+
 
 let rec compile_instr instr info = 
   match instr with 

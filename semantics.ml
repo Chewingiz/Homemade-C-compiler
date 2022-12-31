@@ -7,32 +7,42 @@ exception Imposible of string
 
 let type_error expected p= raise (Error ("Wrong type, expected " ^ expected , p ))
 
-let rec analyze_expr expr env =
-  match expr with
+let rec analyze_value v env = 
+  match v with
+  | Syntax.Void -> Void
   | Syntax.Int n  -> Int n.value
   | Syntax.Bool b -> Bool b.value
+
+let rec analyze_expr expr env =
+  match expr with
   | Syntax.Var v  -> 
     if not (Env.mem v.name env ) then 
       raise (Error ("unbound variable: " ^ v.name, v.pos));
     Var v.name   
-  | Syntax.Void -> Void
+  | Syntax.Value v  -> Value (analyze_value v env)
+ 
 
-  let rec analyze_instr instr env =
-    match instr with
-    | Syntax.DeclVar dv -> 
-      DeclVar dv.name, Env.add dv.name (*true*) dv.type_v env
+let analyze_instr_values var pos ae env =
+     match ae with
+    | Int  _ -> if not(Env.find var env = "int") then type_error ((Env.find var env) ^ " got int") pos ;  Assign (var, Value(ae)) , env
+    | Bool _ -> if not(Env.find var env = "bool") then type_error ((Env.find var env)^ " got bool" )  pos ;  Assign (var, Value(ae)) , env
+    | Void   -> Assign (var, Value(Void)) , env
     
-    | Syntax.Assign a -> 
-      if not (Env.mem a.var env ) then 
-        raise (Error ("variable does not exist: " ^a.var, a.pos));
-      let ae = analyze_expr a.expr env in
-      (match ae with 
-      | Int  _ -> if not(Env.find a.var env = "int") then type_error ((Env.find a.var env) ^ " got int") a.pos ;  Assign (a.var, ae) , env
-	    | Bool _ -> if not(Env.find a.var env = "bool") then type_error ((Env.find a.var env)^ " got bool" )  a.pos ;  Assign (a.var, ae) , env
-      | Var v  -> if not(Env.find a.var env = Env.find v env) then type_error "variable type" a.pos ;  Assign (a.var, ae) , env
-      | Void   -> Assign (a.var, Void) , env
-      )
-    | Return r -> let ae = analyze_expr r.expr env in Return ae, env
+  
+let rec analyze_instr instr env =
+  match instr with
+  | Syntax.DeclVar dv -> 
+    DeclVar dv.name, Env.add dv.name (*true*) dv.type_v env
+  
+  | Syntax.Assign a -> 
+    if not (Env.mem a.var env ) then 
+      raise (Error ("variable does not exist: " ^a.var, a.pos));
+    let ae = analyze_expr a.expr env in
+    (match ae with 
+    | Value v -> analyze_instr_values a.var a.pos v env
+    | Var v  -> if not(Env.find a.var env = Env.find v env) then type_error "variable type" a.pos ;  Assign (a.var, ae) , env
+    )
+  | Return r -> let ae = analyze_expr r.expr env in Return ae, env
 
 let rec analyze_block block env =
   match block with

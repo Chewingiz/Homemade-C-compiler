@@ -1,10 +1,13 @@
 module Syntax = struct
+  type value =
+  | Void 
+  | Int of  { value: int
+           ; pos: Lexing.position }
+  | Bool of { value: bool
+           ; pos: Lexing.position }
+
   type expr =
-    | Void 
-    | Int of  { value: int
-             ; pos: Lexing.position }
-    | Bool of { value: bool
-             ; pos: Lexing.position }
+    | Value of value
     | Var of  { name: string
                  ; pos: Lexing.position }  
 
@@ -31,10 +34,14 @@ module Syntax = struct
 end
 
 module IR = struct
+  type value =
+  | Void 
+  | Bool of bool
+  | Int of int
+  (*|Str of string*)
+
   type expr =
-    | Void
-    | Int of int
-    | Bool of bool
+    | Value of value
     | Var of string
  
   type instr = 
