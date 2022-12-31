@@ -1,16 +1,36 @@
 .text
 .globl main
 main:
- move $fp, $sp
- addi $sp, $sp, -8
+ addi $sp, $sp, 0
+  sw $ra, -4($sp)
+  sw $fp, -8($sp)
+ addi $fp, $sp, -4
   li $v0, 10
-  sw $v0, 0($fp)
+  sw $v0, 8($fp)
   li $v0, 1
-  sw $v0, -4($fp)
-  lw $v0, 0($fp)
-  move $a0, $v0
+  sw $v0, 4($fp)
+  lw $v0, 8($fp)
+  b ret0
+ret0:
+ addi $sp, $sp, 0
+  lw $ra, 0($fp)
+  lw $fp, -4($fp)
+  jr $ra
+seconde:
+ addi $sp, $sp, 0
+  sw $ra, -4($sp)
+  sw $fp, -8($sp)
+ addi $fp, $sp, -4
+  li $v0, 10
+  sw $v0, 8($fp)
   li $v0, 1
-  syscall
+  sw $v0, 4($fp)
+  lw $v0, 4($fp)
+  b ret1
+ret1:
+ addi $sp, $sp, 0
+  lw $ra, 0($fp)
+  lw $fp, -4($fp)
   jr $ra
 
 .data

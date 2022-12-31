@@ -7,17 +7,46 @@
 %token <bool> Lbool
 %token <string> Lident
 %token <string> Ltype
-%token Lend Lsc Leq Lreturn Lvoid
+%token Lend Lsc Leq Lreturn Lvoid Lcomma
+%token Lopeningbrace Lclosingbrace Lopeningparenthesis Lclosingparenthesis 
 
 %start prog
 
-%type <Ast.Syntax.block> prog
+%type <Ast.Syntax.prog> prog
 
 %%
 
 prog:
-	| i = instr ; Lsc ; b = prog { i @ b }
-	| i = instr ; Lsc ; Lend { i }
+	| i = def ; Lsc ; b = prog { i @ b }
+	| i = def ; Lsc ; Lend { i }
+	(*| Lend { [] }*)
+;
+
+def:
+  | t = Ltype ; id = Lident ; Lopeningparenthesis ; ltf = list_type_func ; Lclosingparenthesis ; Lopeningbrace ; block = block ; Lclosingbrace  
+  { 
+    [ Func { type_t = t ; name = id ; arguments = ltf ; block = block } ]
+  }
+  | Lvoid; id = Lident ; Lopeningparenthesis ; ltf = list_type_func ; Lclosingparenthesis ; Lopeningbrace ; block = block ; Lclosingbrace  
+  { 
+    [ Func { type_t = "void"  ; name = id ; arguments = ltf ; block = block } ] 
+  }
+;
+
+list_type_func:
+	| i = type_func ; Lcomma; lf = list_type_func { i :: lf }
+	| i = type_func { [i] }
+  | Lvoid {[]}
+;
+
+type_func:
+| t = Ltype ; id = Lident { Type_func { type_t = t ; name = id }  
+  }
+;
+
+block:
+	| i = instr ; Lsc ; b = block { i @ b }
+	| i = instr ; Lsc { i } 
 	(*| Lend { [] }*)
 ;
 

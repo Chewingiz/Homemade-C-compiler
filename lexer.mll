@@ -8,7 +8,7 @@
 let num = ['0'-'9']
 let alpha = ['a' - 'z' 'A' - 'Z']
 let ident = alpha ( alpha | num | '_')*
-let type =  ("int" | "bool" | "void")  
+let type =  ("int" | "bool" )  
 
 rule token = parse
 | eof             { Lend }
@@ -19,6 +19,11 @@ rule token = parse
 | ';'             { Lsc }
 | '='             { Leq }
 | "return"        { Lreturn }
+| '{'             { Lopeningbrace }
+| '}'             { Lclosingbrace }
+| '('             { Lopeningparenthesis }
+| ')'             { Lclosingparenthesis }
+| ','             { Lcomma }
 
 (*Void*)
 | "void"          { Lvoid }
