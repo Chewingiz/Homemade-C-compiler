@@ -21,6 +21,9 @@ let rec analyze_expr expr env =
       raise (Error ("unbound variable: " ^ v.name, v.pos));
     Var v.name   
   | Syntax.Value v  -> Value (analyze_value v env)
+  | Syntax.Call c ->  if not (Env.mem c.name env ) then 
+    raise (Error ("function doesn't exist : " ^ c.name, c.pos)); 
+  let list_a = List.map (fun arg -> analyze_expr arg env) c.args  in Call (c.name , list_a )
  
 
 let analyze_instr_values var pos ae env =
@@ -46,7 +49,10 @@ let rec analyze_instr instr env =
       let ae = analyze_expr a.expr env in
       (match ae with 
       | Value v -> analyze_instr_values (IR1.LVar(lv)) a.pos v env
-      | Var v  -> if not(Env.find v env = Env.find v env) then type_error "variable type" a.pos ;  Assign ((IR1.LVar(lv)), ae) , env
+      | Var var  -> if not(Env.find lv env = Env.find var env) then type_error "variable type" a.pos ;  Assign ((IR1.LVar(lv)), ae) , env
+      | Call (name , _ ) ->  if not (Env.mem name env ) then 
+        raise (Error ("function doesn't exist : " ^ name, a.pos));
+       if not(Env.find name env = Env.find lv env) then type_error "return type" a.pos ; Assign ((IR1.LVar(lv)), ae) , env (*raise (Error ("Cant assign to a call (impossible) ", a.pos ))*)
       )
     
     (*| LAddr  v -> let z = (V1(v)) in Assign (z, Value(ae)) , env (* No tests for now *)  *)
@@ -78,7 +84,9 @@ let analyze_def def env =
   match def with
     | Syntax.Func f -> let new_b, new_env = (analyze_block f.block env) in 
       let list_arg, newer_env = analyze_list_type_func f.arguments new_env in 
-        let f_env = Env.add f.name f.type_t new_env in
+        if (Env.mem f.name env ) then 
+        raise (Error ("function already exist : " ^ f.name, f.pos)); 
+        let f_env = Env.add f.name f.type_t new_env in (*add test to see if it already exist*)
        Func (f.type_t , f.name , list_arg , new_b) , f_env   
 
 let rec analyze_prog prog env = 

@@ -3,7 +3,11 @@ open Mips
 
 module Env = Map.Make(String)
 
-let _types_ = Env.empty
+let _types_ =  Env.empty
+(*let _types_ =  Env.add "_add" "int" Env.empty*)
+(*
+ _types_ =  Env.add "_add" "int" _types_ ;
+ _types_ =  Env.add "_mul" "int"  _types_ ;*)
 
 (*type native = IR.value list -> IR.value
 
@@ -12,9 +16,10 @@ type env_value =
 | N of native
 | P of string list * IR2.block
 *)
-let builtins =[]
+let builtins =
 
- (* [ Label "_add"
+
+  [ Label "_add"
   ; Lw (T0, Mem (SP, 0))
   ; Lw (T1, Mem (SP, 4))
   ; Add (V0, T0, T1)
@@ -44,4 +49,4 @@ let builtins =[]
   ; Syscall
   ; Jr RA
 
-  ]*)
+  ]

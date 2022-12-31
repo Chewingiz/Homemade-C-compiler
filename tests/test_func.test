@@ -1,11 +1,17 @@
+int seconde ( int patate) {
+	int jus = 4;
+	bool pomme = true;
+	return jus;
+} ;
+
 void main ( void) {
 	int v = 10;
 	bool zed = true;
-	str iizhj = "thisisastring";
-	return v;
+	str gdffjy = "this is a string";
+	#int x = 10 + 3;
+	int x = 4;
+	return x;
+	
+	
 } ;
-void seconde ( int patate) {
-	int jus = 10;
-	bool pomme = true;
-	return pomme;
-} ;
+

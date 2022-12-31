@@ -23,7 +23,16 @@ let rec compile_expr e env =
   match e with
   | IR2.Value v -> compile_value v env
   | Var v   -> [ Lw (V0, Env.find v env) ] 
-  
+  | Call (f, args) ->
+    let ca = List.map (fun a ->
+                 compile_expr a env
+                 @ [ Addi (SP, SP, -4)
+                   ; Sw (V0, Mem (SP, 0)) ])
+               args in
+    List.flatten ca
+    @ [ Jal f
+      ; Addi (SP, SP, 4 * (List.length args)) ]
+
 
 
 let rec compile_instr instr info = 

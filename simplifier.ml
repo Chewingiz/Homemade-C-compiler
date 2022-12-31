@@ -29,6 +29,8 @@ let collect_constant_strings code =
        IR2.Value v, ccs
     | IR1.Var v ->
        IR2.Var v, []
+    | IR1.Call(n,a) -> let list_a = List.map (fun arg -> fst(ccs_expr(arg)) ) a in
+      IR2.Call(n,list_a ), []   
   
   in
   let ccs_lvalue = function

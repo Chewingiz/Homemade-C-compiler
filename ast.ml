@@ -16,6 +16,9 @@ module Syntax = struct
     | Value of value
     | Var of  { name: string
                  ; pos: Lexing.position }  
+    | Call  of { name: string
+                  ; args : expr list
+                  ; pos: Lexing.position } 
   type lvalue =
   | LVar  of string
   | LAddr of expr
@@ -36,7 +39,7 @@ module Syntax = struct
   type list_type_func = type_func list
 
   type def =
-    | Func of { type_t: string ; name : string ; arguments: list_type_func ; block : block }
+    | Func of { type_t: string ; name : string ; arguments: list_type_func ; block : block; pos: Lexing.position  }
 
   type prog = def list
 
@@ -64,6 +67,7 @@ module IR (P : Parameters) = struct
   type expr =
     | Value of P.value
     | Var of string
+    | Call  of string * expr list
 
   type lvalue =
     | LVar  of string

@@ -12,6 +12,14 @@ type reg =
 
 type label = string
 
+module Syscall = struct
+  let print_int = 1
+  let print_str = 4
+  let read_int  = 5
+  let read_str  = 8
+  let sbrk      = 9
+end
+
 type loc = 
 | Lbl of label
 | Mem of reg * int

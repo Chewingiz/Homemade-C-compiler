@@ -8,6 +8,7 @@
 %token <string> Lident
 %token <string> Ltype
 %token <string> Lstring
+(*%token Ladd Lsub Lmul Ldiv *)
 %token Lend Lsc Leq Lreturn Lvoid Lcomma
 %token Lopeningbrace Lclosingbrace Lopeningparenthesis Lclosingparenthesis Lquotationmark
 
@@ -26,11 +27,11 @@ prog:
 def:
   | t = Ltype ; id = Lident ; Lopeningparenthesis ; ltf = list_type_func ; Lclosingparenthesis ; Lopeningbrace ; block = block ; Lclosingbrace  
   { 
-    [ Func { type_t = t ; name = id ; arguments = ltf ; block = block } ]
+    [ Func { type_t = t ; name = id ; arguments = ltf ; block = block; pos = $startpos(id) } ]
   }
   | Lvoid; id = Lident ; Lopeningparenthesis ; ltf = list_type_func ; Lclosingparenthesis ; Lopeningbrace ; block = block ; Lclosingbrace  
   { 
-    [ Func { type_t = "void"  ; name = id ; arguments = ltf ; block = block } ] 
+    [ Func { type_t = "void"  ; name = id ; arguments = ltf ; block = block; pos = $startpos(id) } ] 
   }
 ;
 
@@ -75,11 +76,49 @@ instr:
   | Lreturn ; e = expr { [ Return {expr = e; pos =$startpos} ] }
 ;
 
+list_expr:
+	| e = expr ; Lcomma; lf = list_expr { e :: lf }
+	| e = expr { [e] }
+  | Lvoid {[]}
+;
+;
+
 expr:
+
+(*| a = expr; Ladd ; b = expr {
+	Call { name = "_add" ;
+	args = [a;b]; 
+	pos= $startpos($2) }
+	}
+	
+| a = expr; Lmul ; b = expr {
+	Call { name = "_mul" 
+	;args = [a; b]
+	;pos= $startpos($2) }
+	}*)
+
 | n = Lint {
   Value (Int { value = n ; pos = $startpos(n) })
 }
 | b = Lbool {Value ( Bool	 { value = b ; pos = $startpos(b)})	}
-| Lquotationmark ; s = Lident ; Lquotationmark{Value ( Str	 { value = s ; pos = $startpos(s)})	}
+| s = Lstring {Value ( Str	 { value = s ; pos = $startpos(s)})	}
 | v = Lident { Var 	 { name = v ; pos = $startpos(v)}	}
+| n = Lident ;Lopeningparenthesis; le = list_expr ; Lclosingparenthesis { 
+    Call{ name = n ; args = le ; pos =  $startpos(n)}
+  }
+
+
+
+	
+(*| a = expr; Lsub ; b = expr {
+	Call { name= "_sub" 
+	;args = [a; b]
+	;pos= $startpos($2) }
+	}
+	
+| a = expr; Ldiv ; b = expr {
+	Call { name = "_div" 
+	;args = [a; b]
+	;pos= $startpos($2) }
+	}*)
 ;
