@@ -1,5 +1,5 @@
 int seconde ( int patate) {
-	int jus = 4;
+	int jus = patate ;
 	bool pomme = true;
 	return jus;
 } ;
@@ -9,7 +9,7 @@ void main ( void) {
 	bool zed = true;
 	str gdffjy = "this is a string";
 	#int x = 10 + 3;
-	int x = 4;
+	int x = seconde ( 5 );
 	return x;
 	
 	

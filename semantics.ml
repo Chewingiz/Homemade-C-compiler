@@ -70,23 +70,23 @@ let rec analyze_block block env =
 
 let analyze_type_func tf env = 
   match tf with 
-  | Syntax.Type_func t -> Type_func (t.type_t, t.name) , env
+  | Syntax.Type_func t ->  let n_env = Env.add t.name t.type_t env in Type_func (t.type_t, t.name) , n_env
 
 let rec analyze_list_type_func list_type_func env =
   match list_type_func with
     | i :: f -> 
       let ai, new_env = analyze_type_func i env in 
-      let new_type_f_list = analyze_list_type_func f new_env in 
-      ai :: fst(new_type_f_list) , snd(new_type_f_list)
+      let new_type_f_list , n_env = analyze_list_type_func f new_env in 
+      ai :: new_type_f_list , n_env
     | [] -> [] ,env
 
 let analyze_def def env = 
   match def with
-    | Syntax.Func f -> let new_b, new_env = (analyze_block f.block env) in 
-      let list_arg, newer_env = analyze_list_type_func f.arguments new_env in 
+    | Syntax.Func f -> let list_arg, new_env = ( analyze_list_type_func f.arguments env) in 
+      let new_b, newer_env = analyze_block f.block new_env in 
         if (Env.mem f.name env ) then 
         raise (Error ("function already exist : " ^ f.name, f.pos)); 
-        let f_env = Env.add f.name f.type_t new_env in (*add test to see if it already exist*)
+        let f_env = Env.add f.name f.type_t new_env in 
        Func (f.type_t , f.name , list_arg , new_b) , f_env   
 
 let rec analyze_prog prog env = 

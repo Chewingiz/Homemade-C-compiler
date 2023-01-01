@@ -1,4 +1,5 @@
-open Ast
+open Ast.IR2
+open Ast.V2
 open Mips
 
 module Env = Map.Make(String)
@@ -14,14 +15,14 @@ type cinfo = {
 
 let compile_value v env = 
   match v with 
-  | V2.Void    -> [] 
-  | V2.Int n   -> [ Li (V0, n) ]
-  | V2.Bool b  -> [ Li (V0, if b then 1 else 0) ] 
-  | V2.Data l  -> [ La (V0, Lbl l) ]
+  | Void    -> [ Li (V0, 0) ]
+  | Int n   -> [ Li (V0, n) ]
+  | Bool b  -> [ Li (V0, if b then 1 else 0) ] 
+  | Data l  -> [ La (V0, Lbl l) ]
 
 let rec compile_expr e env =
   match e with
-  | IR2.Value v -> compile_value v env
+  | Value v -> compile_value v env
   | Var v   -> [ Lw (V0, Env.find v env) ] 
   | Call (f, args) ->
     let ca = List.map (fun a ->
@@ -37,7 +38,7 @@ let rec compile_expr e env =
 
 let rec compile_instr instr info = 
   match instr with 
-  | IR2.DeclVar v -> 
+  | DeclVar v -> 
     {
       info with 
       fpo = info.fpo + 4
@@ -70,20 +71,21 @@ and compile_block block info =
 
 let compile_arg a =
   match a with 
-  | IR2.Type_func (type_t,name)-> name
+  | Type_func (type_t,name)-> name
 
 let compile_def def (*Func (name, args, b)*) counter =
   match def with
-  | IR2.Func( t, name, args , b) ->  
+  | Func( t, name, args , b) ->  
   let cb = compile_block b
              { asm = []
              ; env =  List.fold_left
                         (fun e (i, a) -> Env.add a (Mem (FP, 4 * i)) e)
-                        Env.empty (List.mapi (fun i a -> i + 1, compile_arg a) args)
-             ; fpo = 8
+                        Env.empty (List.mapi (fun i a -> i + 1, a) (List.map(fun a ->compile_arg a) args))
+             ; fpo = 8 
              ; counter = counter + 1
              ; return = "ret" ^ (string_of_int counter)
               }
+ 
   in cb.counter,
      []
      @ [ Label name
@@ -97,7 +99,6 @@ let compile_def def (*Func (name, args, b)*) counter =
        ; Lw (RA, Mem (FP, 0))
        ; Lw (FP, Mem (FP, -4))
        ; Jr (RA) ]
-
 
 let rec compile_prog p counter =
  match p with

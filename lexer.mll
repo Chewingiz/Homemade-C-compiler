@@ -41,7 +41,7 @@ rule token = parse
 (*| string+ as s    { Lstring(s) }*)
 
 
-(*Operatiobs*)
+(*Operations*)
 (*| '+'             { Ladd }
 | '-'             { Lsub }
 | '*'             { Lmul }

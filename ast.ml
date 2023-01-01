@@ -31,6 +31,8 @@ module Syntax = struct
       ; pos: Lexing.position
       }
     | Return of { expr : expr ; pos: Lexing.position}
+    | Cond of  { expr : expr ; block1 : block ; block2 : block ; pos: Lexing.position }
+
   and block = instr list
 
   type type_func = 
@@ -77,6 +79,8 @@ module IR (P : Parameters) = struct
     | DeclVar of string
     | Assign of lvalue  * expr
     | Return of expr
+    | Cond   of expr * block * block
+
   and block = instr list
 
   type type_func = 

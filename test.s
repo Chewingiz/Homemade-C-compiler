@@ -30,7 +30,7 @@ seconde:
   sw $ra, 12($sp)
   sw $fp, 8($sp)
   addi $fp, $sp, 12
-  li $v0, 4
+  lw $v0, 4($fp)
   sw $v0, 8($fp)
   li $v0, 1
   sw $v0, 12($fp)
@@ -52,9 +52,16 @@ main:
   sw $v0, 12($fp)
   la $v0, str1
   sw $v0, 16($fp)
-  li $v0, 4
+  li $v0, 5
+  addi $sp, $sp, -4
+  sw $v0, 0($sp)
+  jal seconde
+  addi $sp, $sp, 4
   sw $v0, 20($fp)
   lw $v0, 20($fp)
+   move $a0, $v0
+   li $v0, 1
+   syscall
   b ret1
 ret1:
   addi $sp, $sp, 24
