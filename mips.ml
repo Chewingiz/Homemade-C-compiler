@@ -40,6 +40,7 @@ type instr =
 | B     of label
 | Beqz  of reg * label
 | Jal   of label
+| J     of label
 | Jr    of reg
 
 type directive =
@@ -82,6 +83,7 @@ let fmt_instr = function
 | B (l)            -> ps "  b %s" l
 | Beqz (r, l)      -> ps "  beqz %s, %s" (fmt_reg r) l
 | Jal (l)          -> ps "  jal %s" l
+| J (l)            -> ps "  j  %s" l
 | Jr (r)           -> ps "  jr %s" (fmt_reg r)
 
 let fmt_dir = function

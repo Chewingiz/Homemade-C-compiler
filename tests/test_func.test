@@ -9,7 +9,13 @@ void main ( void) {
 	bool zed = true;
 	str gdffjy = "this is a string";
 	#int x = 10 + 3;
-	int x = seconde ( 5 );
+	int x;
+	if (true){
+		x = seconde ( 5 );
+	} else {
+		x = seconde ( 3 );
+	};
+	#while ( 0 ){ x = v;};
 	return x;
 	
 	

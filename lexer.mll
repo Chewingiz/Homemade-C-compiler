@@ -48,6 +48,13 @@ rule token = parse
 | ':'             { Ldiv }*)
 | '#'             { comment lexbuf }
 
+(*Condition*)
+| "if"            { Lif } 
+| "else"          { Lelse } 
+
+(*Loop*)
+| "while"         { Lwhile }
+
 (*Variables*)
 | type as t       { Ltype (t)}
 | ident+ as i     { Lident (i) }(*needs to be one of the last*)

@@ -32,6 +32,7 @@ module Syntax = struct
       }
     | Return of { expr : expr ; pos: Lexing.position}
     | Cond of  { expr : expr ; block1 : block ; block2 : block ; pos: Lexing.position }
+    | Loop of { expr : expr ; block : block ; pos: Lexing.position} 
 
   and block = instr list
 
@@ -80,6 +81,7 @@ module IR (P : Parameters) = struct
     | Assign of lvalue  * expr
     | Return of expr
     | Cond   of expr * block * block
+    | Loop of expr * block
 
   and block = instr list
 

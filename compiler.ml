@@ -63,6 +63,36 @@ let rec compile_instr instr info =
          @ compile_expr expr info.env
          @ [ B info.return ] 
          }
+  | Cond (c, t, e) ->
+   let uniq = string_of_int info.counter in
+   let ct = compile_block t { info with asm = []
+                                      ; counter = info.counter + 1 } in
+   let ce = compile_block e { info with asm = []
+                                      ; counter = ct.counter } in
+   { info with
+     asm = info.asm
+            @ compile_expr c info.env
+            @ [ Beqz (V0, "else" ^ uniq) ]
+            @ ct.asm
+            @ [ B ("endif" ^ uniq)
+              ; Label ("else" ^ uniq) ]
+            @ ce.asm
+            @ [ Label ("endif" ^ uniq) ]
+   ; counter = ce.counter }
+  | Loop( e , b ) -> 
+    let uniq = string_of_int info.counter in
+    let ct = compile_block b { info with asm = []
+                             ; counter = info.counter + 1 } in
+    { info with
+     asm = info.asm
+            @ [ Jal ("loop" ^ uniq) ]
+            @ compile_expr e info.env
+            @ [ Label ("loop" ^ uniq)
+            ; Beqz (V0, "goback" ) ]
+            @ ct.asm
+            @ [ B ("loop" ^ uniq)]
+   ; counter = ct.counter }
+
 and compile_block block info = 
   match block with
   | i :: b -> 
@@ -111,5 +141,6 @@ let compile (code, data) =
   let info = compile_prog code 0
   in
   { text = Baselib.builtins
-      @ info
+      @ info @ [ Label "goback"
+      ; Jr (RA)]
   ; data = List.map (fun (l, s) -> (l, Asciiz s)) data  }

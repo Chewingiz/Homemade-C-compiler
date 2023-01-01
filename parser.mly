@@ -9,8 +9,8 @@
 %token <string> Ltype
 %token <string> Lstring
 (*%token Ladd Lsub Lmul Ldiv *)
-%token Lend Lsc Leq Lreturn Lvoid Lcomma
-%token Lopeningbrace Lclosingbrace Lopeningparenthesis Lclosingparenthesis Lquotationmark
+%token Lend Lsc Leq Lreturn Lvoid Lcomma Lif Lelse Lwhile
+%token Lopeningbrace Lclosingbrace Lopeningparenthesis Lclosingparenthesis 
 
 %start prog
 
@@ -74,6 +74,11 @@ instr:
     ]
   }
   | Lreturn ; e = expr { [ Return {expr = e; pos =$startpos} ] }
+  | Lif ; Lopeningparenthesis ; e = expr; Lclosingparenthesis; Lopeningbrace ; b1 = block  ; Lclosingbrace ; Lelse ; Lopeningbrace ; b2 = block  ; Lclosingbrace 
+   { [Cond { expr = e ;  block1 = b1 ; block2 = b2 ; pos = $startpos(e) } ] }
+
+  | Lwhile ; Lopeningparenthesis ; e = expr; Lclosingparenthesis ; Lopeningbrace ; b = block  ; Lclosingbrace 
+  { [Loop { expr = e ;  block = b ; pos = $startpos(e) } ] }
 ;
 
 list_expr:

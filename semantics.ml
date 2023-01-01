@@ -59,8 +59,12 @@ let rec analyze_instr instr env =
     )
 
   | Return r -> let ae = analyze_expr r.expr env in Return ae, env
-
-let rec analyze_block block env =
+  | Cond c   -> let ae = analyze_expr c.expr env in
+     let n_b1 , n_env1 = analyze_block c.block1 env in
+     let n_b2 , n_env2 = analyze_block c.block2 env in  Cond ( ae , n_b1 , n_b2) , env
+  | Loop l -> let ae = analyze_expr l.expr env in
+      let n_b , n_env = analyze_block l.block env in Loop ( ae , n_b ) ,env
+and  analyze_block block env =
   match block with
   | i :: b -> 
     let ai, new_env = analyze_instr i env in 

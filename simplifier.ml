@@ -50,7 +50,15 @@ let collect_constant_strings code =
        let lv2, ccs_lv = ccs_lvalue lv in
        let e2, ccs_e = ccs_expr e in
        IR2.Assign (lv2, e2), List.flatten [ ccs_lv ; ccs_e ]
-
+    | IR1.Cond (t, y, n) ->
+     let t2, ccs_t = ccs_expr t in
+     let y2, ccs_y = ccs_block y in
+     let n2, ccs_n = ccs_block n in
+     IR2.Cond (t2, y2, n2), List.flatten [ ccs_t ; ccs_y ; ccs_n ]
+    | IR1.Loop( e , b ) -> 
+      let e2, ccs_e = ccs_expr e in
+      let b2, ccs_b = ccs_block b in
+      IR2.Loop( e2 , b2 ), List.flatten [ ccs_e ; ccs_b ]
   and ccs_block = function
     | [] -> [], []
     | i :: r ->

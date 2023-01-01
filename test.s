@@ -52,21 +52,38 @@ main:
   sw $v0, 12($fp)
   la $v0, str1
   sw $v0, 16($fp)
+  li $v0, 1
+  beqz $v0, else2
   li $v0, 5
   addi $sp, $sp, -4
   sw $v0, 0($sp)
   jal seconde
   addi $sp, $sp, 4
   sw $v0, 20($fp)
+  b endif2
+else2:
+  li $v0, 3
+  addi $sp, $sp, -4
+  sw $v0, 0($sp)
+  jal seconde
+  addi $sp, $sp, 4
+  sw $v0, 20($fp)
+endif2:
+  jal loop3
+  li $v0, 0
+loop3:
+  beqz $v0, goback
+  lw $v0, 8($fp)
+  sw $v0, 20($fp)
+  b loop3
   lw $v0, 20($fp)
-   move $a0, $v0
-   li $v0, 1
-   syscall
   b ret1
 ret1:
   addi $sp, $sp, 24
   lw $ra, 0($fp)
   lw $fp, -4($fp)
+  jr $ra
+goback:
   jr $ra
 
 .data
