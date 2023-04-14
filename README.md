@@ -24,8 +24,8 @@
 	
 ## Exemple of code that works
 ```
-int seconde ( int patate) {
-	int jus = patate ;
+int seconde ( int x) {
+	int jus = x ;
 	bool pomme = true;
 	return jus;
 } ;
@@ -33,7 +33,7 @@ int seconde ( int patate) {
 void main ( void) {
 	int v = 10;
 	bool zed = true;
-	str gdffjy = "this is a string";
+	str w = "this is a string";
 	#int x = 10 + 3;
 	int x;
 	if (true){
