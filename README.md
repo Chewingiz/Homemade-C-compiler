@@ -2,19 +2,15 @@
 
 
 ## How to use it?
-	###  Compilation
-	```
+###  Compilation
 	$ make
-	```
-	### Usage
-	```
+### Usage
 	$ ./main.byte source.c > output.s
-	```
-	Then use SPIM to execute the code:
-	```
+Then use SPIM to execute the code:
+
 	spim -file output.s
-	```
-	You can try with "test.c".
+
+You can try with "test.c".
 ## What Works?
 	- functions
 	- conditions
