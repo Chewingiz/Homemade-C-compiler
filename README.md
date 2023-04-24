@@ -1,7 +1,20 @@
 # homemade_c_compiler_v2
 
 
-
+## How to use it?
+	###  Compilation
+	```
+	$ make
+	```
+	### Usage
+	```
+	$ ./main.byte source.c > output.s
+	```
+	Then use SPIM to execute the code:
+	```
+	spim -file output.s
+	```
+	You can try with "test.c".
 ## What Works?
 	- functions
 	- conditions
