@@ -6,33 +6,32 @@
 	$ make
 ### Usage
 	$ ./main.byte source.c > output.s
-Then use SPIM to execute the code:
+Then use [SPIM](https://en.wikipedia.org/wiki/SPIM) to execute the code:
 
-	spim -file output.s
-
+	$ spim -file output.s
+	
 You can try with "test.c".
 ## What Works?
-	- functions
-	- conditions
-	- return
-	- function call
-	- comments 
+- functions
+- conditions
+- return
+- function call
+- comments 
 	
-	types : 
-		- void
-		- string
-		- int 
-		- variables
+types : 
+- void
+- string
+- int 
+- variables
 
 ## Work in progress
-
-	- pointers ( made parts) 
-	- standard lib ( made parts)
-	- loops ( almost done)
+- pointers ( made parts) 
+- standard lib ( made parts)
+- loops ( almost done)
 	
 	
 ## Exemple of code that works
-```
+```c
 int seconde ( int x) {
 	int jus = x ;
 	bool pomme = true;
@@ -52,8 +51,6 @@ void main ( void) {
 	};
 	#while ( 0 ){ x = v;};
 	return x;
-	
-	
 } ;
 
 ```	
